@@ -18,14 +18,14 @@ std::vector<std::string> tokenize(const std::string& input) {
 }
 
 // Simple symbol table to store variables
-std::map<std::string, std::string> symbolTable;
+std::map<std::string, std::string> symbol_table;
 
 int main() {
     std::cout << "C++ REPL - Type 'exit' to end\n";
 
-    std::string cumulativeCode;  // To store cumulative code entered so far
+    std::string cumulative_stdout;  // To store cumulative code entered so far
     std::vector<std::string> includes;  // To store include statements
-    bool mainIncluded = false;  // To track if the main function is already included
+    bool flag_main = false;  // To track if the main function is already included
 
     while (true) {
         try {
@@ -41,23 +41,23 @@ int main() {
             if (input.find("#include") == 0) {
                 includes.push_back(input);
             } else {
-                cumulativeCode += input + '\n';  // Add the current line to cumulative code
+                cumulative_stdout += input + '\n';  // Add the current line to cumulative code
             }
 
             // Execute the C++ code using std::system
-            std::ofstream codeFile("temp_code.cpp");
+            std::ofstream temp_code_file("temp_code.cpp");
             // Add includes to the beginning of the file
             for (const auto& include : includes) {
-                codeFile << include << '\n';
+                temp_code_file << include << '\n';
             }
             // Add the cumulative code and main function if not included yet
-            if (!mainIncluded) {
-                codeFile << "int main() {\n" << cumulativeCode << "\nreturn 0;\n}";
-                mainIncluded = true;
+            if (!flag_main) {
+                temp_code_file << "int main() {\n" << cumulative_stdout << "\nreturn 0;\n}";
+                flag_main = true;
             } else {
-                codeFile << cumulativeCode;
+                temp_code_file << cumulative_stdout;
             }
-            codeFile.close();
+            temp_code_file.close();
 
             // Build the command to compile the C++ code
             std::string command = "g++ -xc++ -o temp_executable temp_code.cpp";
