@@ -5,6 +5,9 @@
 #include <map>
 #include <stdexcept>
 #include <fstream>
+#include <getopt.h>
+
+#define VERSION     "0.1.0+git"     // VERSION
 
 // Simple tokenizer function
 std::vector<std::string> tokenize(const std::string& input) {
@@ -20,8 +23,9 @@ std::vector<std::string> tokenize(const std::string& input) {
 // Simple symbol table to store variables
 std::map<std::string, std::string> symbol_table;
 
-int main() {
-    std::cout << "C++ REPL - Type 'exit' to end\n";
+// REPL function
+void runREPL() {
+    std::cout << "cppREPL v" << VERSION << " - Type 'exit' to end session\n\n";
 
     std::string cumulative_stdout;  // To store cumulative code entered so far
     std::vector<std::string> includes;  // To store include statements
@@ -76,6 +80,10 @@ int main() {
     }
 
     std::cout << "Exiting C++ REPL\n";
+}
+
+int main() {
+    runREPL();  // Call the REPL function
     return 0;
 }
 

@@ -1,5 +1,7 @@
 # Simple C++ REPL/Shell
-**cppREPL** is a simple interactive shell built on top of the compiler of your choice.
+**cppREPL** is a stupidly simple interactive shell built on top of the compiler of your choice. 
+It behaves as a wrapper around the chosen compiler to emulate an interactive session with various
+features.
 
 I started this as a simple way to prototype quickly in C++ and from my experience with Python's interactive shell. 
 
