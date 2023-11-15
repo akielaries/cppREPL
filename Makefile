@@ -4,7 +4,7 @@ SRCS	= cppREPL.cpp
 BIN		= cppREPL
 
 compile:
-	$(CXX) $(FLGS) $(SRCS) -o $(BIN)
+	$(CXX) $(FLGS) $(SRCS) -lncurses -o $(BIN)
 
 clean:
 	rm -f $(BIN) temp_code.cpp temp_executable
