@@ -1,19 +1,19 @@
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <map>
-#include <stdexcept>
+#include <cstdlib>
+#include <cstdlib>
+#include <ctime>
 #include <fstream>
 #include <getopt.h>
 #include <iomanip>
-#include <cstdlib> // for std::exit
+#include <iostream>
+#include <map>
+#include <ncurses.h>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <sys/utsname.h>
 #include <termios.h>
 #include <unistd.h>
-#include <ncurses.h>
-#include <ctime>
-#include <cstdlib>
-#include <sys/utsname.h>
+#include <vector>
 
 #define VERSION "0.1.0+git" // VERSION
 
@@ -22,7 +22,7 @@ std::vector<std::string> tokenize(const std::string &input) {
     std::vector<std::string> tokens;
     std::istringstream iss(input);
     std::string token;
-    while (iss >> std::quoted(token)) {  // Handle quoted strings properly
+    while (iss >> std::quoted(token)) { // Handle quoted strings properly
 
         tokens.push_back(token);
     }
@@ -33,8 +33,10 @@ std::vector<std::string> tokenize(const std::string &input) {
 std::map<std::string, std::string> symbol_table;
 
 // Function to handle user input and update state
-void handle_input(std::string &cumulative_stdout, std::vector<std::string> &includes,
-                     std::string &main_function, bool &inside_main) {
+void handle_input(std::string &cumulative_stdout,
+                  std::vector<std::string> &includes,
+                  std::string &main_function,
+                  bool &inside_main) {
     std::string input;
     std::cout << ">>> ";
     std::getline(std::cin, input);
@@ -58,8 +60,9 @@ void handle_input(std::string &cumulative_stdout, std::vector<std::string> &incl
 }
 
 // Function to write code to a temporary file
-void file_write(const std::vector<std::string> &includes, const std::string &main_function,
-                     const std::string &cumulative_stdout) {
+void file_write(const std::vector<std::string> &includes,
+                const std::string &main_function,
+                const std::string &cumulative_stdout) {
     std::ofstream temp_code_file("temp_code.cpp");
     // Add includes to the beginning of the file
     for (const auto &include : includes) {
@@ -97,29 +100,32 @@ void runREPL(const char *compiler_path) {
     // Display system information
     struct utsname sys_info;
     if (uname(&sys_info) == 0) {
-        std::cout << "(" << sys_info.sysname << " " << sys_info.release << ", " << sys_info.machine << ") [" << sys_info.version << "] on " << sys_info.nodename << "\n";
+        std::cout << "(" << sys_info.sysname << " " << sys_info.release << ", "
+                  << sys_info.machine << ") [" << sys_info.version << "] on "
+                  << sys_info.nodename << "\n";
     } else {
         std::cerr << "Error getting system information\n";
     }
 
     // Display compiler information
     if (compiler_path) {
-        std::cout << "Custom compiler: " << compiler_path << "\n";
+        std::cout << "Specified compiler: " << compiler_path << "\n";
     } else {
         std::cout << "Default compiler: ";
 #ifdef __GNUC__
-        std::cout << "GCC " << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__;
+        std::cout << "GCC " << __GNUC__ << "." << __GNUC_MINOR__ << "."
+                  << __GNUC_PATCHLEVEL__;
 #else
-        std::cout << "Unknown compiler";
+        std::cout << "Unknown compiler!!";
 #endif
         std::cout << "\n";
     }
 
     // Display C++ standard version
-    std::cout << "C++ standard version: " << __cplusplus << "\n";
+    std::cout << "CXX standard: " << __cplusplus << "\n";
 
-//    std::cout << "cppREPL v" << VERSION << " [" << "]" << std::endl; 
-//    std::cout << "Type 'exit' to end session\n\n";
+    //    std::cout << "cppREPL v" << VERSION << " [" << "]" << std::endl;
+    //    std::cout << "Type 'exit' to end session\n\n";
 
     std::string cumulative_stdout; // To store cumulative code entered so far
     std::vector<std::string> includes; // To store include statements
@@ -128,7 +134,10 @@ void runREPL(const char *compiler_path) {
 
     while (true) {
         try {
-            handle_input(cumulative_stdout, includes, main_function, inside_main);
+            handle_input(cumulative_stdout,
+                         includes,
+                         main_function,
+                         inside_main);
             file_write(includes, main_function, cumulative_stdout);
             execute();
         } catch (const std::exception &e) {
@@ -148,11 +157,11 @@ void usage(const char *bin) {
 
 void help() {
     std::cout << "\nAvailable options:\n"
-            "   -h help\n"
-            "   -v version\n"
-            "   -d [FILE] dump to file\n"
-            "   -c [PATH] compiler\n"
-            "\n";
+                 "   -h help\n"
+                 "   -v version\n"
+                 "   -d [FILE] dump to file\n"
+                 "   -c [PATH] compiler\n"
+                 "\n";
 }
 
 int main(int argc, char *argv[]) {
@@ -163,44 +172,43 @@ int main(int argc, char *argv[]) {
     char compiler[120];
 
     while ((option = getopt(argc, argv, "hvd:c:")) != -1) {
-        switch(option) {
-            // help
-            case 'h':
-                help();
-                exit(EXIT_SUCCESS);
-            // version
-            case 'v':
-                std::cout << VERSION << std::endl;
-                exit(EXIT_SUCCESS);
-                break;
+        switch (option) {
+        // help
+        case 'h':
+            help();
+            exit(EXIT_SUCCESS);
+        // version
+        case 'v':
+            std::cout << VERSION << std::endl;
+            exit(EXIT_SUCCESS);
+            break;
 
-            // dump to file
-            case 'd':
-                d_flag = 0;
-                // output file name
-                snprintf(filename, sizeof(filename), "%s", optarg);
+        // dump to file
+        case 'd':
+            d_flag = 0;
+            // output file name
+            snprintf(filename, sizeof(filename), "%s", optarg);
 
-                std::cout << "Dumping to file: " << filename << "\n";
-                break;
+            std::cout << "Dumping to file: " << filename << "\n";
+            break;
 
-            // compiler
-            case 'c':
-                c_flag = 0;
-                // get compiler filepath/name
-                snprintf(compiler, sizeof(compiler), "%s", optarg);
+        // compiler
+        case 'c':
+            c_flag = 0;
+            // get compiler filepath/name
+            snprintf(compiler, sizeof(compiler), "%s", optarg);
 
-                std::cout << "Using compiler: " << compiler << "\n";
-                break;
+            std::cout << "Using compiler: " << compiler << "\n";
+            break;
 
-            case '?':
-                usage(argv[0]);
-                exit(EXIT_FAILURE);
-                break;
-            
-            default:
-                usage(argv[0]);
-                exit(EXIT_FAILURE);
+        case '?':
+            usage(argv[0]);
+            exit(EXIT_FAILURE);
+            break;
 
+        default:
+            usage(argv[0]);
+            exit(EXIT_FAILURE);
         }
     }
 
@@ -208,4 +216,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
